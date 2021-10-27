@@ -60,3 +60,8 @@ dependencies:
 
 This widget is verbose and useless when you are using english sentence.
 Flutter do not support word break with CJK at this moment. If flutter supports, this widget must be change to only Text widget.
+
+## Thanks specially
+
+I found the comment from flutter repository [here](https://github.com/flutter/flutter/issues/59284#issuecomment-877904306). I appreciate to [@06153](https://github.com/06153). It is insanely genious solution.
+but I hope so flutter team support natively word break in CJK sentence. Please.
