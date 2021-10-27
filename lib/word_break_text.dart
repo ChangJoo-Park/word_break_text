@@ -20,7 +20,6 @@ import 'package:flutter/material.dart';
 ///
 /// ## cons
 /// [WordBreakText] widget using Wrap for word-break.
-// ignore: must_be_immutable
 class WordBreakText extends StatelessWidget {
   /// The text to display.
   ///
@@ -35,7 +34,7 @@ class WordBreakText extends StatelessWidget {
   /// If the style's "inherit" property is true, the style will be merged with
   /// the closest enclosing [DefaultTextStyle]. Otherwise, the style will
   /// replace the closest enclosing [DefaultTextStyle].
-  TextStyle? style;
+  final TextStyle? style;
 
   /// Used to select a font when the same Unicode character can
   /// be rendered differently, depending on the locale.
@@ -44,15 +43,15 @@ class WordBreakText extends StatelessWidget {
   /// is inherited from the enclosing app with `Localizations.localeOf(context)`.
   ///
   /// See [RenderParagraph.locale] for more information.
-  Locale? locale;
+  final Locale? locale;
 
   /// How the text should be aligned horizontally.
-  TextAlign? textAlign;
+  final TextAlign? textAlign;
 
   /// The strategy to use when calculating the width of the Text.
   ///
   /// See [TextWidthBasis] for possible values and their implications.
-  TextWidthBasis? textWidthBasis;
+  final TextWidthBasis? textWidthBasis;
 
   /// The number of font pixels for each logical pixel.
   ///
@@ -62,10 +61,10 @@ class WordBreakText extends StatelessWidget {
   /// The value given to the constructor as textScaleFactor. If null, will
   /// use the [MediaQueryData.textScaleFactor] obtained from the ambient
   /// [MediaQuery], or 1.0 if there is no [MediaQuery] in scope.
-  double? textScaleFactor;
+  final double? textScaleFactor;
 
   /// {@macro flutter.dart:ui.textHeightBehavior}
-  TextHeightBehavior? textHeightBehavior;
+  final TextHeightBehavior? textHeightBehavior;
 
   /// How the children within a run should be placed in the main axis.
   ///
@@ -80,7 +79,7 @@ class WordBreakText extends StatelessWidget {
   ///    other in the cross axis.
   ///  * [crossAxisAlignment], which controls how the children within each run
   ///    are placed relative to each other in the cross axis.
-  WrapAlignment wrapAlignment;
+  final WrapAlignment wrapAlignment;
 
   /// The direction to use as the main axis.
   ///
@@ -88,29 +87,31 @@ class WordBreakText extends StatelessWidget {
   /// children are placed adjacent to one another in a horizontal run until the
   /// available horizontal space is consumed, at which point a subsequent
   /// children are placed in a new run vertically adjacent to the previous run.
-  Axis direction;
+  final Axis direction;
 
   /// Who [Wrap] should align children within a run in the cross axis.
-  WrapCrossAlignment crossAxisAlignment;
-  WrapAlignment runAlignment;
+  final WrapCrossAlignment crossAxisAlignment;
+  final WrapAlignment runAlignment;
 
   /// Space between words.
   ///
-  double spacing;
-  double runSpacing;
+  final double spacing;
+
+  /// Space beween lines.
+  final double runSpacing;
 
   /// This is a spacing strategy.
   ///
   /// If `true`, no spaces are added to words,
   /// only the [spacing] of the Wrap widget is used.
-  bool spacingByWrap;
+  final bool spacingByWrap;
 
   List<String> get _splitData =>
       data.split(' ').where((element) => element.trim() != '').toList();
 
   int get _lastWordIndex => _splitData.length - 1;
 
-  WordBreakText(
+  const WordBreakText(
     this.data, {
     Key? key,
     this.style,
@@ -126,7 +127,7 @@ class WordBreakText extends StatelessWidget {
     this.runSpacing = 0.0,
     this.spacing = 0.0,
     this.spacingByWrap = false,
-  })  : assert(data.isNotEmpty),
+  })  : assert(data.length > 0),
         super(key: key);
 
   @override
