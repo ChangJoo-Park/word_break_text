@@ -1,6 +1,6 @@
 name: word_break_text
-description: A Flutter Text widget support word break for CJK
-version: 0.0.1
+description: A Flutter Text widget support word break for CJK. Based on Wrap with Text widget
+version: 0.1.0
 homepage: https://github.com/ChangJoo-Park/word_break_text
 repository: https://github.com/ChangJoo-Park/word_break_text
 environment:
