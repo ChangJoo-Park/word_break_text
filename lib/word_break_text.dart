@@ -1,5 +1,7 @@
 library word_break_text;
 
+export 'package:word_break_text/testing.dart';
+
 import 'package:flutter/material.dart';
 import 'package:word_break_text/utils.dart';
 
