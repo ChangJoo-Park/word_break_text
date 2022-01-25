@@ -1,6 +1,7 @@
 library word_break_text;
 
 import 'package:flutter/material.dart';
+import 'package:word_break_text/utils.dart';
 
 /// Text widget with word-break.
 ///
@@ -106,10 +107,45 @@ class WordBreakText extends StatelessWidget {
   /// only the [spacing] of the Wrap widget is used.
   final bool spacingByWrap;
 
-  List<String> get _splitData =>
-      data.split(' ').where((element) => element.trim() != '').toList();
+  List<String> _splitData(BuildContext context, double maxWidth) {
+    double textWidthOf(String text) {
+      return getTextSize(
+              context, text, style ?? DefaultTextStyle.of(context).style)
+          .width;
+    }
+    /// Returns an index of text that is cut at the max width.
+    int getCutIndexOf(String text) {
+      int lo = -1;
+      int hi = text.length;
+      while (lo + 1 < hi) {
+        int mid = ((lo + hi) / 2).floor();
+        if (textWidthOf(text.substring(0, mid)) < maxWidth) {
+          lo = mid;
+        } else {
+          hi = mid;
+        }
+      }
+      return lo;
+    }
 
-  int get _lastWordIndex => _splitData.length - 1;
+    final list =
+        data.split(' ').where((element) => element.trim() != '').toList();
+    final result = <String>[];
+
+    for (int i = 0; i < list.length; ++i) {
+      result.add(list[i]);
+      // 한 어절 단위가 최대 너비보다 크다면 최대 너비 사이즈마다 단어를 쪼갠다.
+      while (textWidthOf(result.last) > maxWidth) {
+        final overflowingText = result.last;
+        result.removeLast();
+
+        int cutIndex = getCutIndexOf(overflowingText);
+        result.add(overflowingText.substring(0, cutIndex));
+        result.add(overflowingText.substring(cutIndex, overflowingText.length));
+      }
+    }
+    return result;
+  }
 
   const WordBreakText(
     this.data, {
@@ -131,8 +167,16 @@ class WordBreakText extends StatelessWidget {
         super(key: key);
 
   @override
-  Widget build(BuildContext context) => Wrap(
-        children: _splitData.asMap().entries.map(_mapTextWidget).toList(),
+  Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      final splitData = _splitData(context, constraints.maxWidth);
+
+      return Wrap(
+        children: splitData
+            .asMap()
+            .entries
+            .map((e) => _mapTextWidget(e, splitData.length))
+            .toList(),
         crossAxisAlignment: crossAxisAlignment,
         alignment: wrapAlignment,
         direction: direction,
@@ -140,11 +184,13 @@ class WordBreakText extends StatelessWidget {
         runSpacing: runSpacing,
         spacing: spacing,
       );
+    });
+  }
 
-  Text _mapTextWidget(mapEntry) {
+  Text _mapTextWidget(mapEntry, int lastIndex) {
     String data = mapEntry.value;
     if (!spacingByWrap) {
-      if (mapEntry.key != _lastWordIndex) data = '$data ';
+      if (mapEntry.key != lastIndex) data = '$data ';
     }
     return Text(
       data,
