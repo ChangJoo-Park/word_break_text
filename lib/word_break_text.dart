@@ -109,46 +109,6 @@ class WordBreakText extends StatelessWidget {
   /// only the [spacing] of the Wrap widget is used.
   final bool spacingByWrap;
 
-  List<String> _splitData(BuildContext context, double maxWidth) {
-    double textWidthOf(String text) {
-      return getTextSize(
-              context, text, style ?? DefaultTextStyle.of(context).style)
-          .width;
-    }
-    /// Returns an index of text that is cut at the max width.
-    int getCutIndexOf(String text) {
-      int lo = -1;
-      int hi = text.length;
-      while (lo + 1 < hi) {
-        int mid = ((lo + hi) / 2).floor();
-        if (textWidthOf(text.substring(0, mid)) < maxWidth) {
-          lo = mid;
-        } else {
-          hi = mid;
-        }
-      }
-      return lo;
-    }
-
-    final list =
-        data.split(' ').where((element) => element.trim() != '').toList();
-    final result = <String>[];
-
-    for (int i = 0; i < list.length; ++i) {
-      result.add(list[i]);
-      // 한 어절 단위가 최대 너비보다 크다면 최대 너비 사이즈마다 단어를 쪼갠다.
-      while (textWidthOf(result.last) > maxWidth) {
-        final overflowingText = result.last;
-        result.removeLast();
-
-        int cutIndex = getCutIndexOf(overflowingText);
-        result.add(overflowingText.substring(0, cutIndex));
-        result.add(overflowingText.substring(cutIndex, overflowingText.length));
-      }
-    }
-    return result;
-  }
-
   const WordBreakText(
     this.data, {
     Key? key,
@@ -187,6 +147,47 @@ class WordBreakText extends StatelessWidget {
         spacing: spacing,
       );
     });
+  }
+
+  List<String> _splitData(BuildContext context, double maxWidth) {
+    double textWidthOf(String text) {
+      return getTextSize(
+              context, text, style ?? DefaultTextStyle.of(context).style)
+          .width;
+    }
+
+    /// Returns an index of text that is cut at the max width.
+    int getCutIndexOf(String text) {
+      int lo = -1;
+      int hi = text.length;
+      while (lo + 1 < hi) {
+        int mid = ((lo + hi) / 2).floor();
+        if (textWidthOf(text.substring(0, mid)) < maxWidth) {
+          lo = mid;
+        } else {
+          hi = mid;
+        }
+      }
+      return lo;
+    }
+
+    final list =
+        data.split(' ').where((element) => element.trim() != '').toList();
+    final result = <String>[];
+
+    for (int i = 0; i < list.length; ++i) {
+      result.add(list[i]);
+      // 한 어절 단위가 최대 너비보다 크다면 최대 너비 사이즈마다 단어를 쪼갠다.
+      while (textWidthOf(result.last) > maxWidth) {
+        final overflowingText = result.last;
+        result.removeLast();
+
+        int cutIndex = getCutIndexOf(overflowingText);
+        result.add(overflowingText.substring(0, cutIndex));
+        result.add(overflowingText.substring(cutIndex, overflowingText.length));
+      }
+    }
+    return result;
   }
 
   Text _mapTextWidget(mapEntry, int lastIndex) {
